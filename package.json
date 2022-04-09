@@ -1,0 +1,25 @@
+{
+  "name": "backend-challenge",
+  "version": "1.0.0",
+  "description": "Back-end Challenge Hash",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielbrunogbs/backend-challenge.git"
+  },
+  "author": "Daniel Bruno",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielbrunogbs/backend-challenge/issues"
+  },
+  "homepage": "https://github.com/danielbrunogbs/backend-challenge#readme",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.6.2",
+    "@grpc/proto-loader": "^0.6.9",
+    "cors": "^2.8.5",
+    "express": "^4.17.3"
+  }
+}
