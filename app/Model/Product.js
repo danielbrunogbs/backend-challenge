@@ -23,7 +23,7 @@ class Product
 		let product = this.file.find(item => parseInt(item.id) === parseInt(id));
 
 		if(!product)
-			throw new RequestException('Produto não localizado!', 404);
+			throw new RequestException(`Produto não localizado! (id: ${id})`, 404);
 
 		return product;
 	}

@@ -2,18 +2,13 @@ const RequestException = require('../Exception/RequestException.js');
 const Cart = require('../Model/Cart.js');
 const Product = require('../Model/Product.js');
 
-function add(req, res, next)
+function index(req, res, next)
 {
 	try
 	{
-		let product = new Product();
-		product = product.find(req.params.id);
-
 		let cart = new Cart();
 
-		cart = cart.add(product);
-
-		return res.send({ cart, message: 'Produto adicionado com sucesso no seu carrinho!' });
+		return res.status(200).send({ cart: cart.all() });
 	}
 	catch(e)
 	{
@@ -21,4 +16,32 @@ function add(req, res, next)
 	}
 }
 
-module.exports = { add };
+function add(req, res, next)
+{
+	try
+	{
+		if(!req.body || !req.body.products)
+			throw new RequestException('É necessário informar uma lista de produtos!', 422);
+
+		let cart = new Cart();
+
+		req.body.products.forEach(item => {
+
+			if(!item.id || !item.quantity)
+				throw new RequestException('É necessário informar todos os campos para adicionar o produto no carrinho!', 422);
+
+			let product = new Product();
+
+			cart.add(product.find(item.id), parseInt(item.quantity));
+
+		});
+
+		return res.status(200).send({ message: 'Produtos adicionados no carrinho!' });
+	}
+	catch(e)
+	{
+		next(e);
+	}
+}
+
+module.exports = { add, index };

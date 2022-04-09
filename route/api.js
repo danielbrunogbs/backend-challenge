@@ -16,6 +16,7 @@ route.get('/product/:id', ProductController.show);
 
 /* Carrinho */
 
-route.put('/cart/:id', CartController.add);
+route.post('/cart', CartController.add);
+route.get('/cart', CartController.index);
 
 module.exports = route;

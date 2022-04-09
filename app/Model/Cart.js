@@ -1,5 +1,4 @@
-const grpc = require('@grpc/grpc-js');
-const loader = require('@grpc/proto-loader');
+const DiscountService = require('../Service/DiscountService.js');
 const fs = require('fs');
 
 class Cart
@@ -8,29 +7,55 @@ class Cart
 	{
 		/* Realiza a leitura do banco do carrinho */
 
-		let file = './cart.json';
+		this.file = './cart.json';
 
-		if(!fs.existsSync(file))
+		if(!fs.existsSync(this.file))
 			throw new RequestException('Banco do carrinho não localizado!', 404);
 
-		this.file = JSON.parse(fs.readFileSync(file).toString('utf8'));
+		let content = fs.readFileSync(this.file).toString('utf8');
+		content = JSON.parse(content);
+		content = Array.from(content);
+
+		this.cart = content;
 	}
 
-	async add(product)
+	async add(product, quantity)
 	{
-		/* Processa o arquivo proto */
+		/* Se conecta com o serviço de desconto para pegar a porcentagem */
 
-		let protoFile = loader.loadSync('./discount.proto');
+		let service = new DiscountService();
+		let discount = 0;
 
-		let packageProto = grpc.loadPackageDefinition(protoFile).discount;
+		try
+		{
+			discount = await service.GetDiscount(product.id);
 
-		let client = new packageProto.Discount('localhost:50051', grpc.credentials.createInsecure());
+			if(discount.percentage)
+				discount = discount.percentage;
+			else
+				discount = 0;
+		}
+		catch(e)
+		{
+			console.log(`Não foi possível aplicar o desconto! (Erro: ${e.message})`);
+		}
 
-		let response = client.GetDiscount({ productID: parseInt(product.id) }, (err, response) => {
+		/* Calcula a quantidade de porcentagem por quantidade de produto */
 
-			console.log(response);
+		discount = discount * quantity;
+		discount = (((product.amount * quantity) / 100) / 100) * discount;
 
-		});
+		product.amount = ((product.amount / 100) - discount).toFixed(2) * 100;
+		product.quantity = quantity;
+
+		this.cart.push(product);
+
+		fs.writeFileSync(this.file, JSON.stringify(this.cart), { flag: 'w' });
+	}
+
+	all()
+	{
+		return this.cart;
 	}
 }
 
