@@ -17,45 +17,107 @@ class Cart
 		content = Array.from(content);
 
 		this.cart = content;
+
+		console.log('O construtor foi executado!');
 	}
 
 	async add(product, quantity)
 	{
-		/* Se conecta com o serviço de desconto para pegar a porcentagem */
+		return new Promise(async (resolve, reject) => {
 
-		let service = new DiscountService();
-		let discount = 0;
+			/* Se conecta com o serviço de desconto para pegar a porcentagem */
 
-		try
-		{
-			discount = await service.GetDiscount(product.id);
+			let service = new DiscountService();
+			let discount = 0;
 
-			if(discount.percentage)
-				discount = discount.percentage;
-			else
-				discount = 0;
-		}
-		catch(e)
-		{
-			console.log(`Não foi possível aplicar o desconto! (Erro: ${e.message})`);
-		}
+			try
+			{
+				discount = await service.GetDiscount(product.id);
 
-		/* Calcula a quantidade de porcentagem por quantidade de produto */
+				if(discount.percentage)
+					discount = discount.percentage;
+				else
+					discount = 0;
+			}
+			catch(e)
+			{
+				console.log(`Não foi possível aplicar o desconto! (Erro: ${e.message})`);
+			}
 
-		discount = discount * quantity;
-		discount = (((product.amount * quantity) / 100) / 100) * discount;
+			/* Busca o produto caso ele já tenha sido inserido, para somar futuramente dentro do carrinho */
 
-		product.amount = ((product.amount / 100) - discount).toFixed(2) * 100;
-		product.quantity = quantity;
+			let added = this.find(product.id);
 
-		this.cart.push(product);
+			/* Calcula a porcentagem de desconto de acordo com a quantidade do mesmo produto sendo adicionada */
 
-		fs.writeFileSync(this.file, JSON.stringify(this.cart), { flag: 'w' });
+			discount = discount * quantity;
+
+			console.log(`Desconto: % ${discount}`);
+
+			let amount = (product.amount / 100) * quantity;
+
+			console.log(`Valor: R$ ${amount}`);
+
+			discount = amount * discount;
+
+			console.log(`Valor Desconto: R$ ${discount}`);
+
+			amount = (amount - discount).toFixed(2);
+
+			console.log(`Valor Final: R$ ${amount}`);
+
+			amount = amount * 100; //Transformar o valor em centavos
+
+			console.log(`Valor Centavos: ${amount}`);
+
+			product.amount = amount;
+			product.quantity = quantity;
+
+			/*
+			* Verifica se o produto já foi adicionado no carrinho e altera o mesmo somando os novos valores
+			* a taxa é calculada no produto atual sendo inserido, NÃO modificando o anterior, para caso as taxas
+			* sejam diferentes.
+			*/
+
+			if(added)
+			{
+				product.amount += added.amount;
+				product.quantity += added.quantity;
+
+				this.cart = this.cart.filter(item => parseInt(item.id) !== parseInt(product.id));
+			}
+
+			/* Adiciona o produto no carrinho */
+
+			resolve(this.cart.push(product));
+
+		});
 	}
 
 	all()
 	{
 		return this.cart;
+	}
+
+	save()
+	{
+		return new Promise((resolve, reject) => {
+
+			fs.writeFile(this.file, JSON.stringify(this.cart), { flag: 'w' }, (err, success) => {
+
+				if(err)
+					reject(err);
+
+				resolve(success);
+
+			});
+
+		});
+	}
+
+	find(id)
+	{
+		return this.cart.find(item => parseInt(item.id) === parseInt(id));
 	}
 }
 

@@ -15,7 +15,7 @@ class Product
 
 	all()
 	{
-		return this.file;
+		return this.file.filter(item => item.is_gift !== true);
 	}
 
 	find(id)

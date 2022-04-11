@@ -6,7 +6,7 @@ function index(req, res, next)
 	{
 		let product = new Product();
 
-		return res.status(200).send({ products: product.all() }, 200);
+		return res.status(200).send({ products: product.all() });
 	}
 	catch(e)
 	{
@@ -20,7 +20,7 @@ function show(req, res, next)
 	{
 		let product = new Product();
 
-		return res.status(200).send({ product: product.find(req.params.id) }, 200);
+		return res.status(200).send({ product: product.find(req.params.id) });
 	}
 	catch(e)
 	{

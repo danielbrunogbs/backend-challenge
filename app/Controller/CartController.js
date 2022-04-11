@@ -16,7 +16,7 @@ function index(req, res, next)
 	}
 }
 
-function add(req, res, next)
+async function add(req, res, next)
 {
 	try
 	{
@@ -36,7 +36,9 @@ function add(req, res, next)
 
 		});
 
-		return res.status(200).send({ message: 'Produtos adicionados no carrinho!' });
+		await cart.save();
+
+		return res.status(200).send({ cart: cart.all(), message: 'Produtos adicionados no carrinho!' });
 	}
 	catch(e)
 	{
