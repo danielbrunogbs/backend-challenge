@@ -15,9 +15,8 @@ class Cart
 
 		let content = fs.readFileSync(this.file).toString('utf8');
 		content = JSON.parse(content);
-		content = Array.from(content);
 
-		this.cart = content;
+		this.base = content;
 	}
 
 	/* Método para adicionar produtos no carrinho */
@@ -60,6 +59,10 @@ class Cart
 				console.log(`Não foi possível aplicar o desconto! (Erro: ${e.message})`);
 			}
 
+			/* Soma os valores total dos produtos que estão sendo adicionados */
+
+			this.base.total_amount += product.amount * quantity;
+
 			/* Busca o produto caso ele já tenha sido inserido, para somar futuramente dentro do carrinho */
 
 			let added = this.find(product.id);
@@ -78,16 +81,29 @@ class Cart
 
 			console.log(`Valor Desconto: R$ ${discount}`);
 
+			/* Salva o valor do desconto em centavos */
+
+			product.discount = discount * 100;
+			this.base.total_discount += discount * 100;
+
 			amount = (amount - discount).toFixed(2);
 
 			console.log(`Valor Final: R$ ${amount}`);
 
 			amount = amount * 100; //Transformar o valor em centavos
 
+			/* Soma os valores total com os descontos */
+
+			this.base.total_amount_with_discount += amount;
+
 			console.log(`Valor Centavos: ${amount}`);
 
+			product.unity_amount = product.amount;
 			product.amount = amount;
 			product.quantity = quantity;
+			
+			delete product.title;
+			delete product.description;
 
 			/*
 			* Verifica se o produto já foi adicionado no carrinho e altera o mesmo somando os novos valores
@@ -99,13 +115,14 @@ class Cart
 			{
 				product.amount += added.amount;
 				product.quantity += added.quantity;
+				product.discount += added.discount;
 
-				this.cart = this.cart.filter(item => parseInt(item.id) !== parseInt(product.id));
+				this.base.products = this.base.products.filter(item => parseInt(item.id) !== parseInt(product.id));
 			}
 
 			/* Adiciona o produto no carrinho */
 
-			resolve(this.cart.push(product));
+			resolve(this.base.products.push(product));
 
 		});
 	}
@@ -114,7 +131,7 @@ class Cart
 
 	all()
 	{
-		return this.cart;
+		return this.base;
 	}
 
 	/* Método para salvar o produto no carrinho */
@@ -123,7 +140,7 @@ class Cart
 	{
 		return new Promise((resolve, reject) => {
 
-			fs.writeFile(this.file, JSON.stringify(this.cart), { flag: 'w' }, (err, success) => {
+			fs.writeFile(this.file, JSON.stringify(this.base), { flag: 'w' }, (err, success) => {
 
 				if(err)
 					reject(err);
@@ -139,14 +156,14 @@ class Cart
 
 	find(id)
 	{
-		return this.cart.find(item => parseInt(item.id) === parseInt(id));
+		return this.base.products.find(item => parseInt(item.id) === parseInt(id));
 	}
 
 	/* Método que verifica se há produto brinde no carrinho */
 
 	hasGift()
 	{
-		return this.cart.find(item => item.is_gift === true);
+		return this.base.products.find(item => item.is_gift === true);
 	}
 }
 

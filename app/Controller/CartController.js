@@ -9,7 +9,7 @@ function index(req, res, next)
 	{
 		let cart = new Cart();
 
-		return res.status(200).send({ cart: cart.all() });
+		return res.status(200).send(cart.all());
 	}
 	catch(e)
 	{
@@ -44,8 +44,6 @@ async function add(req, res, next)
 		*
 		* Deverá ser verificado se é black friday e caso seja, você 
 		* deve adicionar um produto brinde no carrinho.
-		*
-		* Obs: Até o momento, não foi informado para ser realizar o calculo de desconto no produto brinde.
 		*/
 
 		if(!process.env.BLACK_FRIDAY || !moment(process.env.BLACK_FRIDAY).isValid())
@@ -64,6 +62,8 @@ async function add(req, res, next)
 			let gift = new Product();
 			gift = gift.gift();
 
+			gift.amount = 0; //Brinde não tem valor
+
 			if(gift)
 				await cart.add(gift, 1);
 			else
@@ -74,7 +74,7 @@ async function add(req, res, next)
 
 		await cart.save();
 
-		return res.status(200).send({ cart: cart.all(), message: 'Produtos adicionados no carrinho!' });
+		return res.status(200).send(cart.all());
 	}
 	catch(e)
 	{
