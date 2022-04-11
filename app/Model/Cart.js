@@ -1,3 +1,4 @@
+const RequestException = require('../Exception/RequestException.js');
 const DiscountService = require('../Service/DiscountService.js');
 const fs = require('fs');
 
@@ -17,18 +18,31 @@ class Cart
 		content = Array.from(content);
 
 		this.cart = content;
-
-		console.log('O construtor foi executado!');
 	}
 
 	async add(product, quantity)
 	{
 		return new Promise(async (resolve, reject) => {
 
-			/* Se conecta com o serviço de desconto para pegar a porcentagem */
+			/*
+			* Regra número 1
+			*
+			* Para cada produto você precisará calcular a porcentagem de desconto e isso deve ser feito
+			* consumindo um serviço gRPC fornecido por nós para auxiliar no seu teste. Utilize a imagem
+			* Docker para subir esse serviço de desconto e o arquivo proto para gerar o cliente na linguagem
+			* escolhida. Você pode encontrar como gerar um cliente gRPC nas documentações oficiais da
+			* ferramenta e em outros guias encontrados na internet.
+			*/
 
 			let service = new DiscountService();
 			let discount = 0;
+
+			/*
+			* Regra número 2
+			*
+			* Caso o serviço de desconto esteja indisponível o endpoint de carrinho deverá
+			* continuar funcionando porém não vai realizar o cálculo com desconto.
+			*/
 
 			try
 			{
@@ -118,6 +132,11 @@ class Cart
 	find(id)
 	{
 		return this.cart.find(item => parseInt(item.id) === parseInt(id));
+	}
+
+	hasGift()
+	{
+		return this.cart.find(item => item.is_gift === true);
 	}
 }
 

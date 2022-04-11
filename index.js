@@ -2,6 +2,9 @@ const express = require('express');
 const Route = require('./route/api.js');
 const cors = require('cors');
 
+/* ENV */
+require('dotenv').config();
+
 const app = express();
 
 app.use(cors());
