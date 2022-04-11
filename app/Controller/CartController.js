@@ -21,6 +21,8 @@ async function add(req, res, next)
 {
 	try
 	{
+		/* Verifica se recebeu a lista de produtos */
+
 		if(!req.body || !req.body.products)
 			throw new RequestException('É necessário informar uma lista de produtos!', 422);
 

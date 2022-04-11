@@ -20,6 +20,8 @@ class Cart
 		this.cart = content;
 	}
 
+	/* Método para adicionar produtos no carrinho */
+
 	async add(product, quantity)
 	{
 		return new Promise(async (resolve, reject) => {
@@ -108,10 +110,14 @@ class Cart
 		});
 	}
 
+	/* Método para trazer todos os produtos do carrinho */
+
 	all()
 	{
 		return this.cart;
 	}
+
+	/* Método para salvar o produto no carrinho */
 
 	save()
 	{
@@ -129,10 +135,14 @@ class Cart
 		});
 	}
 
+	/* Método para buscar um produto no carrinho */
+
 	find(id)
 	{
 		return this.cart.find(item => parseInt(item.id) === parseInt(id));
 	}
+
+	/* Método que verifica se há produto brinde no carrinho */
 
 	hasGift()
 	{
