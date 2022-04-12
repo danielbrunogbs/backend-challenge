@@ -77,14 +77,15 @@ class Cart
 
 			console.log(`Valor: R$ ${amount}`);
 
-			discount = amount * discount;
+			discount = (amount * discount).toFixed(2);
+
+			this.base.total_discount += parseFloat(discount) * 100;
 
 			console.log(`Valor Desconto: R$ ${discount}`);
 
 			/* Salva o valor do desconto em centavos */
 
 			product.discount = discount * 100;
-			this.base.total_discount += discount * 100;
 
 			amount = (amount - discount).toFixed(2);
 
