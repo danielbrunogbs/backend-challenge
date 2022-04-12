@@ -8,11 +8,8 @@ class DiscountService
 	{
 		/* Pega o IP e Porta do serviço */
 
-		if(!process.env.GRPC_HOST || !process.env.GRPC_PORT)
-			throw new RequestException('Environments não localizadas!', 404);
-
-		this.host = process.env.GRPC_HOST;
-		this.port = process.env.GRPC_PORT;
+		this.host = process.env.GRPC_HOST ? process.env.GRPC_HOST : 'localhost' ;
+		this.port = process.env.GRPC_PORT ? process.env.GRPC_PORT : '50051' ;
 
 		/* Processa o arquivo .proto */
 
