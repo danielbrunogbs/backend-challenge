@@ -3,6 +3,7 @@ version: "3.9"
 services:
 
   app:
+    container_name: backend-challenge
     build: .
     command: npm start
     ports:
