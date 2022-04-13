@@ -24,6 +24,13 @@ Baixar o respositório utilizando o seguinte comando:
 git clone https://github.com/danielbrunogbs/backend-challenge.git
 ```
 
+E rodar dentro da raiz do projeto o comando:
+
+```
+npm install
+```
+Para instalar todas as dependência do projeto.
+
 #### Segundo passo
 
 Você deve instalar o **[Docker](https://www.docker.com/)** seguindo os passos das documentações oficiais.
@@ -55,7 +62,7 @@ A partir desse momento, o serviço irá ser executado e estará disponível para
 
 > O parâmetro :id deve ser substituído pelo ID do Produto
 
-### **GET /cart** - Lista os produtos inserido no carrinho
+### **GET /cart** - Lista os produtos inseridos no carrinho
 
 ### **POST /cart** - Adiciona um produto no carrinho
 
