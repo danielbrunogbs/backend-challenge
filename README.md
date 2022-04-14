@@ -24,18 +24,22 @@ Baixar o respositório utilizando o seguinte comando:
 git clone https://github.com/danielbrunogbs/backend-challenge.git
 ```
 
-E rodar dentro da raiz do projeto o comando:
+#### Segundo passo
+
+Na sequência é necessário instalar o **[NodeJS](https://nodejs.org/en/)** e o **[NPM](https://nodejs.org/en/)** (Gerenciador de Pacotes do Node), seguindo as documentações oficiais.
+
+Rodar dentro da raiz do projeto o comando:
 
 ```
 npm install
 ```
 Para instalar todas as dependência do projeto.
 
-#### Segundo passo
+#### Terceiro passo
 
 Você deve instalar o **[Docker](https://www.docker.com/)** seguindo os passos das documentações oficiais.
 
-#### Terceiro passo
+#### Quarto passo
 
 Você deve criar o arquivo **.env** com base no **.env.example**, o mesmo se repete para o arquivo **cart.json** que deve utilizar como base o **cart.example.json**.
 > O arquivo **.env** deve ser configurado de acordo com as suas necessidades.
@@ -44,7 +48,7 @@ Você deve criar o arquivo **.env** com base no **.env.example**, o mesmo se rep
 > 
 > Variável **GRPC_HOST** e **GRPC_PORT** deve conter o IP e PORTA do serviço que vai se conectar.
 
-#### Quarto passo (Final)
+#### Quinto passo (Final)
 
 Você deve ir na raiz do diretório e executar o seguinte comando:
 
